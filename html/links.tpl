@@ -8,6 +8,16 @@
      <input type="text" name="link" />
      <button id="add_link">Add a link!</button>
      <div id="links">
+      % for link in links:
+        <div id="wrapper_link_{{link[0]}}">
+          <p id="link_{{ link[0] }}">{{link[1]}}</p>
+            <p>
+              <input type="text" value="{{link[1]}}" id="link_edit_form_id_{{ link[0] }}" />
+              <button class="edit" id="link_edit_id_{{ link[0] }}">Edit</button>
+              <button class="delete" id="link_delete_id_{{ link[0] }}">Delete</button>
+          </p>
+        </div>
+      % end
      </div>
      <script type="text/javascript">
        $(document).on("click", "#add_link", function(e) {

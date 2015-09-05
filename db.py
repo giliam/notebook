@@ -1,6 +1,17 @@
 # coding:utf-8
 import sqlite3
 
-db = sqlite3.connect('bottle.db')
-db.execute("CREATE TABLE links (id INTEGER PRIMARY KEY, link TEXT NOT NULL, creation INTEGER NOT NULL)")
-db.commit()
+def init():
+    db = sqlite3.connect('bottle.db')
+    db.execute("CREATE TABLE links (lid INTEGER PRIMARY KEY, link TEXT NOT NULL, creation INTEGER NOT NULL)")
+    db.commit()
+
+def uses_db(func):
+    def wrapped(*args, **kwargs):
+        db = sqlite3.connect('bottle.db')
+        return func(db, *args, **kwargs)
+        db.close()
+    return wrapped
+
+if __name__ == '__main__':
+    init()

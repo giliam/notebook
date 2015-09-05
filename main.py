@@ -1,10 +1,10 @@
 # coding: utf-8
 from bottle import Bottle, run, view, static_file, request, install
-from bottle_sqlite import SQLitePlugin
+import sqlite3
 from datetime import datetime
+from db import uses_db
 
 app = Bottle()
-install(SQLitePlugin(dbfile='/bottle.db'))
 
 @app.route('/')
 @view('html/index.tpl')
@@ -13,38 +13,44 @@ def index():
 
 @app.route('/links')
 @view('html/links.tpl')
-def links():
-    return ({})
+@uses_db
+def links(db):
+    links = db.execute('SELECT lid, link FROM links').fetchall()
+    return ({'links':links})
 
 @app.post('/add/link')
 @view('html/link.tpl')
+@uses_db
 def add_link_POST(db):
     """
         Adds the link to the database for post request (AJAX)
     """
     link = request.forms.get('link')
     # Adds the link in the database and get the ID
-    row = db.execute('INSERT INTO links(link, creation) VALUES(?, ?)', (link, datetime.now()))
-    print row
-    row = db.execute('SELECT * from links where link=?', item).fetchone()
-    return ({'id':row['id'],'link':link})
+    cursor = db.execute('INSERT INTO links(link, creation) VALUES(?, ?)', (link, datetime.now()))
+    db.commit()
+    return ({'id':cursor.lastrowid,'link':link})
 
 @app.put('/edit/link/<link_id:int>')
-def edit_link(link_id):
+@uses_db
+def edit_link(db, link_id):
     """
         Edit the link from the database
     """
     link = request.forms.get('link')
     # Edit the link in the database
-    print link_id
+    db.execute('UPDATE links SET link = ? WHERE lid = ?', (link,link_id))
+    db.commit()
     return ""
 
 @app.delete('/delete/link/<link_id:int>')
-def delete_link(link_id):
+@uses_db
+def delete_link(db, link_id):
     """
         Delete the link from the database
     """
-    print link_id
+    db.execute('DELETE FROM links WHERE lid = ?', (link_id,))
+    db.commit()
     return ""
 
 @app.route('/static/<filename:path>')
@@ -54,4 +60,5 @@ def server_static(filename):
     """
     return static_file(filename, root='.')
 
-run(app, host='localhost', port=8080)
+if __name__ == '__main__':
+    run(app, host='localhost', port=8080)
