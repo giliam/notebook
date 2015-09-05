@@ -7,7 +7,7 @@
        $(document).ready(function() {
 
          $("#add_link").click(function(e) {
-           $.post("/add/link", {"link": $("input[name='link']").val()})
+           $.post("/add/link", {link: $("input[name='link']").val()})
             .done(function(string) {
                $("#links").html($("#links").html() + string);
             });
@@ -41,7 +41,7 @@
      </script>
    </head>
    <body>
-     <input type="text" name="url" />
+     <input type="text" name="link" />
      <button id="add_link">Add a link!</button>
      <div id="links">
      </div>

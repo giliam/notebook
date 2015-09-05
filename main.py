@@ -2,7 +2,7 @@
 from bottle import Bottle, run, view, static_file, request
 
 app = Bottle()
- 
+
 @app.route('/')
 @view('html/index.tpl')
 def hello():
@@ -14,8 +14,7 @@ def add_link_POST():
     """
         Adds the link to the database for post request (AJAX)
     """
-    print request.params
-    link = request.params.get('link')
+    link = request.forms.get('link')
     link_id = 1
     return ({'id':link_id,'link':link})
 
