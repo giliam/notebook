@@ -11,45 +11,45 @@ app = Bottle()
 def index():
     return ({})
 
-@app.route('/links')
-@view('html/links.tpl')
+@app.route('/notepad')
+@view('html/notepad.tpl')
 @uses_db
-def links(db):
-    links = db.execute('SELECT lid, link FROM links').fetchall()
-    return ({'links':links})
+def notepad(db):
+    notepad = db.execute('SELECT nid, entry FROM notepad').fetchall()
+    return ({'notepad':notepad})
 
-@app.post('/add/link')
-@view('html/link.tpl')
+@app.post('/notepad/add/entry')
+@view('html/entry.tpl')
 @uses_db
-def add_link_POST(db):
+def add_entry_POST(db):
     """
-        Adds the link to the database for post request (AJAX)
+        Adds the entry to the database for post request (AJAX)
     """
-    link = request.forms.get('link')
-    # Adds the link in the database and get the ID
-    cursor = db.execute('INSERT INTO links(link, creation) VALUES(?, ?)', (link, datetime.now()))
+    entry = request.forms.get('entry')
+    # Adds the entry in the database and get the ID
+    cursor = db.execute('INSERT INTO notepad(entry, creation) VALUES(?, ?)', (entry, datetime.now()))
     db.commit()
-    return ({'id':cursor.lastrowid,'link':link})
+    return ({'id':cursor.lastrowid,'entry':entry})
 
-@app.put('/edit/link/<link_id:int>')
+@app.put('/notepad/edit/entry/<entry_id:int>')
 @uses_db
-def edit_link(db, link_id):
+def edit_entry(db, entry_id):
     """
-        Edit the link from the database
+        Edit the entry from the database
     """
-    link = request.forms.get('link')
-    # Edit the link in the database
-    db.execute('UPDATE links SET link = ? WHERE lid = ?', (link,link_id))
+    entry = request.forms.get('entry')
+    # Edit the entry in the database
+    db.execute('UPDATE notepad SET entry = ? WHERE nid = ?', (entry,entry_id))
     db.commit()
     return ""
 
-@app.delete('/delete/link/<link_id:int>')
+@app.delete('/notepad/delete/entry/<entry_id:int>')
 @uses_db
-def delete_link(db, link_id):
+def delete_entry(db, entry_id):
     """
-        Delete the link from the database
+        Delete the entry from the database
     """
-    db.execute('DELETE FROM links WHERE lid = ?', (link_id,))
+    db.execute('DELETE FROM notepad WHERE nid = ?', (entry_id,))
     db.commit()
     return ""
 
