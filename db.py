@@ -9,8 +9,9 @@ def init():
 def uses_db(func):
     def wrapped(*args, **kwargs):
         db = sqlite3.connect('bottle.db')
-        return func(db, *args, **kwargs)
+        result = func(db, *args, **kwargs)
         db.close()
+        return result
     return wrapped
 
 if __name__ == '__main__':
