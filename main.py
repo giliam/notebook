@@ -43,6 +43,17 @@ def edit_entry(db, entry_id):
     db.commit()
     return ""
 
+@app.put('/notepad/close/entry/<entry_id:int>')
+@uses_db
+def close_entry(db, entry_id):
+    """
+        Close the entry
+    """
+    # Close the entry in the database
+    db.execute('UPDATE notepad SET status = 1 WHERE nid = ?', (entry_id))
+    db.commit()
+    return ""
+
 @app.delete('/notepad/delete/entry/<entry_id:int>')
 @uses_db
 def delete_entry(db, entry_id):
