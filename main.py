@@ -15,7 +15,7 @@ def index():
 @view('html/notepad.tpl')
 @uses_db
 def notepad(db):
-    notepad = db.execute('SELECT nid, entry FROM notepad').fetchall()
+    notepad = db.execute('SELECT nid, entry, status FROM notepad').fetchall()
     return ({'notepad':notepad})
 
 @app.post('/notepad/add/entry')
@@ -50,7 +50,18 @@ def close_entry(db, entry_id):
         Close the entry
     """
     # Close the entry in the database
-    db.execute('UPDATE notepad SET status = 1 WHERE nid = ?', (entry_id))
+    db.execute('UPDATE notepad SET status = 1 WHERE nid = ?', (entry_id,))
+    db.commit()
+    return ""
+
+@app.put('/notepad/open/entry/<entry_id:int>')
+@uses_db
+def open_entry(db, entry_id):
+    """
+        Open the entry
+    """
+    # Open the entry in the database
+    db.execute('UPDATE notepad SET status = 0 WHERE nid = ?', (entry_id,))
     db.commit()
     return ""
 
